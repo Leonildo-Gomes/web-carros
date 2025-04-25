@@ -1,54 +1,20 @@
-# React + TypeScript + Vite
+#  ReactJs - Projeto Web Carros
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação voltada para venda e comercializacao de carros. O utilizador vendedor pode cadastrar carros e publicar no sistema.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
+## Tecnologias Utilizadas:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+- [React.js](https://reactjs.org/) - Biblioteca JavaScript para construção de interfaces
+- [React Router Dom](https://reactrouter.com/)- Gerenciamento de rotas
+- [React Hook Form](https://react-hook-form.com/) -  biblioteca leve para lidar com formulários em React
+- [Zod](https://github.com/colinhacks/zod?tab=readme-ov-file#primitives) - biblioteca de validação de schemas, e ele funciona super bem com React Hook Form via o zodResolver
+- [React Hot Toast](https://react-hot-toast.com/) - Sistema de notificações e alertas
+- [TailwindCSS](https://tailwindcss.com/) - Framework CSS para estilização
+- [TypeScript](https://www.typescriptlang.org/) - Superset JavaScript para tipagem estática
+- [Vite](https://vitejs.dev/) - Build tool e ambiente de desenvolvimento rápido para projetos JavaScript
+- [React Icons](https://react-icons.github.io/react-icons/) - Biblioteca de ícones para React
+- [Axios](https://axios-http.com/docs/intro) - Cliente HTTP baseado em Promises para fazer requisições
+- [Json Server](https://github.com/typicode/json-server) - Biblioteca para criar uma API REST fake para desenvolvimento e testes
+- [Firebase](https://firebase.google.com/) - Para criar a API REST dos produtos
