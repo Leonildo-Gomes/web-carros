@@ -1,5 +1,5 @@
 import { RegisterOptions, UseFormRegister } from 'react-hook-form';
-interface InputProps { 
+interface InputProps  { 
     type:string;
     placeholder: string;
     name: string;
@@ -12,11 +12,11 @@ export function Input({ name, type, placeholder , register, rules, error}: Input
 
     return (
         <div>
-            <input className="w-full border-2 rounded-md h-11 px-2"
+            <input className="w-full border-1 rounded-md h-11 px-2 outline-none"
                placeholder={  placeholder }
               type={  type } 
               id={ name }
-              { ... register(name, rules) }
+              { ...register(name, rules) }
             />
             { error && <p className='my-1 text-red-500'>{ error }</p>
              }

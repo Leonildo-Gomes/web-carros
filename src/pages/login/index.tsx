@@ -22,7 +22,7 @@ export function Login() {
    
     return ( 
         <Container> 
-           <div className='bg-amber-500 w-full min-h-screen flex justify-center items-center flex-col gap-4' >
+           <div className='w-full min-h-screen flex justify-center items-center flex-col gap-4' >
                 <Link to="/" className='mb-6 max-w-sm w-full'>
                     <img 
                         src={ logo }  
@@ -31,7 +31,7 @@ export function Login() {
                     />
                 </Link>
                 <form 
-                    className='bg-white max-w-xl'
+                    className='bg-white max-w-xl w-full rounded-lg p-4'
                     onSubmit={handleSubmit(onSubmit)}>
                      <div className='mb-3'>
                         <Input type="email"
@@ -50,9 +50,14 @@ export function Login() {
                         />
                      </div>
 
-                     <button>Acessar</button>
+                     <button type='submit' className='bg-zinc-900 w-full rounded-md h-10 text-white font-medium'>
+                        Acessar
+                    </button>
                            
                 </form>
+                <Link to='/register'>
+                    Ainda nao possui uma conta? Cadastre-se
+                </Link>
            </div>
 
         </Container>
