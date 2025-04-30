@@ -1,23 +1,45 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import logo from '../../assets/logo.svg';
 import { Container } from '../../components/container';
 import { Input } from '../../components/input';
+import { auth } from '../../services/firebaseConnection';
+
 const schema =z.object( { 
     email: z.string().email("Digite um email válido").nonempty("O campo Email é obrigatorio"),
     password: z.string().nonempty("O campo de password é obrigatório")
  }  )
 type FormData= z.infer<typeof schema>
 export function Login() { 
+
+    const navigate = useNavigate(); 
     const  { register, handleSubmit, formState:  {errors }}= useForm<FormData>( { 
             resolver:zodResolver(schema),
             mode:'onChange'
         }
     )
+
+    useEffect(() => {
+        async function handleLogout() {
+            await signOut(auth); 
+        }
+        handleLogout(); 
+    }, []) 
     function onSubmit(data: FormData){
-        console.log(data)
+       signInWithEmailAndPassword(auth, data.email, data.password) 
+       .then((user) => {
+            console.log(user) 
+            console.log("usuario cadastrado com sucesso") 
+            navigate("/dashboard", { replace: true }) 
+       })
+       .catch((error) => {
+           console.log("erro ao cadastrar")  
+           console.log(error) 
+       })
     } 
    
     return ( 

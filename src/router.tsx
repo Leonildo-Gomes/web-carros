@@ -7,6 +7,7 @@ import { New } from "./pages/dashboard/new";
 import { Home } from "./pages/home";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
+import { Private } from "./routes/Private";
 
 const router = createBrowserRouter([ 
     { 
@@ -18,15 +19,15 @@ const router = createBrowserRouter([
         }, 
         {
             path: '/car/:id', 
-            element: <CarDetail /> 
+            element:<CarDetail/>
         }, 
         {
             path: '/dashboard/new', 
-            element: <New /> 
+            element: <Private> <New/>  </Private>
         }, 
         {
             path: '/dashboard', 
-            element: <Dashboard /> 
+            element:  <Private> <Dashboard/> </Private>
         }, 
        ]
     },
