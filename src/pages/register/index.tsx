@@ -1,10 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import logo from '../../assets/logo.svg';
 import { Container } from '../../components/container';
 import { Input } from '../../components/input';
+import { AuthContext } from '../../context/AuthContext';
 import { auth } from '../../services/firebaseConnection';
 
 import { createUserWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
@@ -16,7 +18,7 @@ const schema =z.object( {
  }  )
 type FormData= z.infer<typeof schema>
 export function Register() { 
-
+   const { handleInfoUser }= useContext(AuthContext);
     const navigate = useNavigate();
     const  { register, handleSubmit, formState:  {errors }}= useForm<FormData>( { 
             resolver:zodResolver(schema),
@@ -39,6 +41,11 @@ export function Register() {
                     displayName: data.name 
                 }
             )
+            handleInfoUser({
+                uid:user.user.uid,
+                name:data.name,
+                email:data.email 
+            }) 
             console.log("usuario cadastrado com sucesso")  
             navigate("/dashboard", { replace: true })  
              
