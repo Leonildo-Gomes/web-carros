@@ -2,10 +2,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Container } from "../../../components/container";
 import { DashboardHeader } from "../../../components/panelheader";
 
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { ChangeEvent, useContext } from "react";
+import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { ChangeEvent, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { FiUpload } from 'react-icons/fi';
+import { FiTrash, FiUpload } from 'react-icons/fi';
 import { v4 as uuidV4 } from 'uuid';
 import { z } from 'zod';
 import { Input } from "../../../components/input";
@@ -26,13 +26,20 @@ const schema =z.object( {
      })  
 })
 type FormData = z.infer<typeof schema> 
+
+interface ImageItemProps {
+     uid: string; 
+     name: string;
+     previewUrl: string; 
+     url: string; 
+}
 export function New() { 
     const { user }= useContext(AuthContext); 
     const { register, handleSubmit, formState:  {errors }, reset}= useForm<FormData>( {
             resolver:zodResolver(schema),
             mode:'onChange'
         })
-    
+    const [carImages, setCarImages ] =useState<ImageItemProps[]> ([]); 
     function onSubmit(data: FormData){
         console.log(data)
     } 
@@ -47,8 +54,51 @@ export function New() {
             //gruardar ficheiro na BD
         } 
     }
-
     async function handleUpload(image: File) {
+        if (!user?.uid) {
+            return alert("Usuário não logado");
+        }
+    
+        const currentUid = user.uid;
+        console.log(currentUid); 
+        const uidImage = uuidV4();
+        const uploadRef = ref(storage, `images/${currentUid}/${uidImage}`);
+        const uploadTask = uploadBytesResumable(uploadRef, image);
+    
+        uploadTask.on("state_changed",
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log("Upload is " + progress + "% done");
+            },
+            (error) => {
+                console.error("Erro no upload:", error.code, error.message);
+            },
+            () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+                    console.log("Download URL:", url);
+                    const imageItem = {
+                        uid: uidImage,
+                        name: uidImage,
+                        previewUrl: URL.createObjectURL(image),
+                        url: url, 
+                    }
+                    setCarImages((carImages)=> [...carImages, imageItem]); 
+                });
+            }
+        );
+    }
+    async function handleDeleteImage(item: ImageItemProps){
+       const imagePath=`images/${user?.uid}/${item.name}`; 
+       const imageRef=ref(storage, imagePath); 
+       try {
+            await deleteObject(imageRef); 
+            setCarImages((carImages) => carImages.filter((carImage) => carImage.uid !== item.uid)); 
+       } catch (error) {
+            console.log(error)
+       } 
+    }
+
+   /* async function handleUpload(image: File) {
        
         if(!user?.uid){
             return alert("Usuario nao logado")
@@ -58,7 +108,6 @@ export function New() {
         const uploadRef=ref(storage,`images/${currentUid}/${uidImage}`);
         console.log("upload");
         uploadBytes(uploadRef, image)
-        
         .then((snapshot) => {
             getDownloadURL(snapshot.ref)
             .then((urlImage) => {
@@ -71,7 +120,7 @@ export function New() {
             console.log(e)
         });
         console.log("upload 33");
-    } 
+    } */
 
     return ( 
         <Container> 
@@ -92,6 +141,22 @@ export function New() {
                         />
                     </div>
                 </button>
+
+                {carImages.map ( item => (
+                    <div key={item.uid} className="w-full h-32 flex items-center justify-center relative" > 
+                        <button className="absolute top-2 right-2  cursor-pointer" onClick={()=>handleDeleteImage(item ) }>
+                            <FiTrash size={28} color='#ff0000' /> 
+                        </button>
+                        <img
+                            src={item.previewUrl }
+                            alt="foto do carro"
+                            className=" h-32 object-cover rounded-lg w-full" 
+
+                        />
+                    </div>
+                )
+                     
+                )}
             </div>
             <div  className="w-full bg-white  p-3 rounded-lg flex flex-col sm:flex-row items-center gap-2 mt-2">
 
@@ -188,10 +253,7 @@ export function New() {
                         >
                             Cadastrar
                     </button> 
-
                 </form>
-
-
             </div>
         </Container>
     )
