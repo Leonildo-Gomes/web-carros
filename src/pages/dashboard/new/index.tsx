@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Container } from "../../../components/container";
 import { DashboardHeader } from "../../../components/panelheader";
 
+import { addDoc, collection } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { ChangeEvent, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -10,7 +11,8 @@ import { v4 as uuidV4 } from 'uuid';
 import { z } from 'zod';
 import { Input } from "../../../components/input";
 import { AuthContext } from "../../../context/AuthContext";
-import { storage } from "../../../services/firebaseConnection";
+import { db, storage } from "../../../services/firebaseConnection";
+
 
 
 const schema =z.object( {
@@ -41,6 +43,40 @@ export function New() {
         })
     const [carImages, setCarImages ] =useState<ImageItemProps[]> ([]); 
     function onSubmit(data: FormData){
+        console.log(carImages.length ) 
+        if(carImages.length === 0) {
+            alert("Envie pelo menos uma imagem");
+            return ;
+        }
+        const carListImages = carImages.map((item) => {
+            return {
+                uid: item.uid, 
+                name: item.name,
+                url: item.url
+            }
+        })
+        addDoc(collection(db, "cars"), {
+            name: data.name,
+            model: data.model,
+            year: data.year,
+            km: data.km,
+            price: data.price,
+            description: data.description,
+            city: data.city,
+            whatsapp: data.whatsapp,
+            creted: new Date(),
+            uid: user?.uid,
+            images: carListImages
+        })
+        .then(() => {
+             console.log("cadastrado com sucesso")
+             reset()
+             setCarImages([]) 
+        })
+        .catch((error) => {
+            console.log(error)
+            console.log("erro ao cadastrar") 
+        })
         console.log(data)
     } 
     async function handleFile(event: ChangeEvent<HTMLInputElement>){

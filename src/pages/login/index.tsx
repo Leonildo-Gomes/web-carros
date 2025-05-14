@@ -72,7 +72,7 @@ export function Login() {
                         />
                      </div>
 
-                     <button type='submit' className='bg-zinc-900 w-full rounded-md h-10 text-white font-medium'>
+                     <button type='submit' className='bg-zinc-900 w-full rounded-md h-10 text-white font-medium cursor-pointer'>
                         Acessar
                     </button>
                            
