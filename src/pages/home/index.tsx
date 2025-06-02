@@ -1,7 +1,58 @@
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Container } from "../../components/container";
+import { db } from "../../services/firebaseConnection";
 
-
+interface CarProps {
+    id: string;
+    name: string;
+    year: string;
+    km: string;
+    price: string | number; 
+    city: string;
+    uid: string;
+    images: CarImageProps[] 
+}
+interface CarImageProps {
+     uid: string; 
+     name: string; 
+     url: string 
+}
 export function Home() { 
+
+    const [cars, setCars] = useState<CarProps[]>([]); 
+
+    useEffect(() => {
+        async function getCars() {
+            const carsRef = collection(db, "cars"); 
+            const querryRef= query(carsRef, orderBy("created", "desc")); 
+            getDocs(querryRef)
+            .then((snapshot) => {
+                console.log(snapshot.docs)
+                const list = [] as CarProps[]; 
+                snapshot.forEach((doc) => {
+                    list.push({
+                        id: doc.id,
+                        name: doc.data().name,
+                        year: doc.data().year,
+                        km: doc.data().km,
+                        price: doc.data().price,
+                        city: doc.data().city,
+                        uid: doc.data().uid,
+                        images: doc.data().images
+                    })
+                })
+                setCars(list); 
+                 
+            })
+            .catch((error) => {
+                console.log(error) 
+            }) 
+        }
+        getCars(); 
+    }, []) 
+
     return ( 
         <Container > 
            <section className="bg-white p-4 rounded-lg w-full max-w-3xl mx-auto flex justify-center items-center gap-2">
@@ -17,27 +68,34 @@ export function Home() {
                  Carros novos e usados em todo o Brazil
            </h1>
            <main className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+           { cars.map(car => (
+            <Link key={car.id} to={`/car/${car.id}`}>
                 <section className="w-full rounded-lg bg-white" >
                     <img className="w-full rounded-lg mb-2 max-h-72 hover:scale-105 trassition-all"
-                        src="https://image.webmotors.com.br/_fotos/anunciousados/gigante/2025/202504/20250424/bmw-320i-2.0-16v-turbo-flex-m-sport-automatico-wmimagem10213290971.jpg?s=fill&w=1920&h=1440&q=75" alt="carro" 
+                        src={ car.images[0].url} 
+                        alt={ car.images[0].name} 
                     />
-                    <p className="font-bold mt-1 mb-2 px-2">BMW 320i</p>
+                    <p className="font-bold mt-1 mb-2 px-2">{car.name}</p>
                     <div className="flex flex-col px-2">
                         <span className="text-zinc-700 mb-6"> 
-                            Ano/2018  -- 23.000km
+                            Ano { car.year} | { car.km}km
                         </span>
                         <strong className="text-black font-medium text-xl">
-                            R$ 190.000
+                        { Number(car.price).toLocaleString('pt-br', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        })}
                         </strong>
                     </div>
                     <div className=" w-full h-px bg-slate-200 my-2"></div>
                     <div className=" px-2 pb-2">
                         <span className="text-zinc-700 mb-6">
-                            Campo Grande
+                        { car.city}
                         </span>
                     </div>
-                </section>
-                
+                    </section>
+            </Link>     
+           ))}         
            </main>
         </Container>
     )

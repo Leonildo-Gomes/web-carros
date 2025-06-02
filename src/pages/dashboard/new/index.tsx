@@ -64,8 +64,9 @@ export function New() {
             description: data.description,
             city: data.city,
             whatsapp: data.whatsapp,
-            creted: new Date(),
+            created: new Date(),
             uid: user?.uid,
+            owner:user?.name,
             images: carListImages
         })
         .then(() => {
