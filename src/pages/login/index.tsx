@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import logo from '../../assets/logo.svg';
@@ -33,11 +34,13 @@ export function Login() {
        signInWithEmailAndPassword(auth, data.email, data.password) 
        .then((user) => {
             console.log(user) 
-            console.log("usuario cadastrado com sucesso") 
+            
+            toast.success("Usuario Logado com sucesso") 
             navigate("/dashboard", { replace: true }) 
        })
        .catch((error) => {
-           console.log("erro ao cadastrar")  
+           console.log("erro ao fazer o login no Sistema")  
+           toast.error("erro ao fazer o login no Sistema") 
            console.log(error) 
        })
     } 

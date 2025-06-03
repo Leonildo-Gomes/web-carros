@@ -6,6 +6,7 @@ import { addDoc, collection } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { ChangeEvent, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { FiTrash, FiUpload } from 'react-icons/fi';
 import { v4 as uuidV4 } from 'uuid';
 import { z } from 'zod';
@@ -45,7 +46,7 @@ export function New() {
     function onSubmit(data: FormData){
         console.log(carImages.length ) 
         if(carImages.length === 0) {
-            alert("Envie pelo menos uma imagem");
+            toast.error("Envie pelo menos uma imagem");
             return ;
         }
         const carListImages = carImages.map((item) => {
@@ -56,7 +57,7 @@ export function New() {
             }
         })
         addDoc(collection(db, "cars"), {
-            name: data.name,
+            name: data.name.toLocaleUpperCase(),
             model: data.model,
             year: data.year,
             km: data.km,
@@ -70,13 +71,13 @@ export function New() {
             images: carListImages
         })
         .then(() => {
-             console.log("cadastrado com sucesso")
+            toast.success("Carro cadastrado com sucesso")
              reset()
              setCarImages([]) 
         })
         .catch((error) => {
             console.log(error)
-            console.log("erro ao cadastrar") 
+            toast.error("erro ao cadastrar no banco") 
         })
         console.log(data)
     } 
@@ -84,7 +85,7 @@ export function New() {
         if(event.target.files && event.target.files[0]) { 
             const image = event.target.files[0] 
             if(image.type !== 'image/png' && image.type !== 'image/jpeg') {
-                return alert('Tipo de arquivo invalido');
+                return toast.error('Tipo de arquivo invalido');
             }
             console.log(image)
             await handleUpload(image) 

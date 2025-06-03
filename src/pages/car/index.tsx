@@ -64,7 +64,7 @@ export function CarDetail() {
         } 
         getCar(); 
          
-    }, []); 
+    }, [id, navigate]); 
     useEffect (() => {
         function handleRezise() {
              if(window.innerWidth < 720) {

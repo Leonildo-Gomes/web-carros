@@ -11,6 +11,7 @@ import { auth } from '../../services/firebaseConnection';
 
 import { createUserWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
 import { useEffect } from 'react';
+import toast from 'react-hot-toast';
 const schema =z.object( { 
     name:z.string().nonempty("O campo é obrigatorio") ,
     email: z.string().email("Digite um email válido").nonempty("O campo Email é obrigatorio"),
@@ -46,12 +47,12 @@ export function Register() {
                 name:data.name,
                 email:data.email 
             }) 
-            console.log("usuario cadastrado com sucesso")  
+            toast.success("Bem vindo ao sistema WebCarros")   
             navigate("/dashboard", { replace: true })  
              
         })
         .catch((error) => {
-            console.log("erro ao cadastrar")  
+            toast.error("erro ao efectuar o cadastro")  
             console.log(error)
         }) 
     } 

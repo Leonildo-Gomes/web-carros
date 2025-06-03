@@ -4,12 +4,5 @@
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
   ],
-  "compilerOptions": {
-    // ... other options ...
-    "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
-    "paths": {
-      "@/*": ["src/*"]
-    },
-  }
+  
 }

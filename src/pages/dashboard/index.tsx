@@ -1,6 +1,7 @@
 import { collection, deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
 import { deleteObject, ref } from 'firebase/storage';
 import { useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { FiTrash2 } from 'react-icons/fi';
 import { Container } from "../../components/container";
 import { DashboardHeader } from "../../components/panelheader";
@@ -54,13 +55,13 @@ export function Dashboard() {
         const docRef = doc(db, "cars", car.id);
         await deleteDoc(docRef)
         .then(() => {
-            console.log("apagado com sucesso") 
+            toast.success("Carro para deletado com sucesso")  
             car.images.map( async (image) => {
                 const imageRef = ref(storage, `images/${image.uid}/${image.name}`);
                 try {
                     await deleteObject(imageRef); 
                 } catch (error) {
-                    console.log('Erro ao deletar imagens')
+                    toast.error('Erro ao deletar imagens')
                     console.log(error)
                 } 
             }) 
@@ -69,6 +70,7 @@ export function Dashboard() {
         
         .catch((error) => {
             console.log(error) 
+            toast.error('Erro ao deletar o carro') 
         }) ; 
          
     }

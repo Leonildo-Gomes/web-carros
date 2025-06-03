@@ -1,4 +1,4 @@
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Container } from "../../components/container";
@@ -23,39 +23,70 @@ export function Home() {
 
     const [cars, setCars] = useState<CarProps[]>([]); 
     const [loadImages, setLoadImages ] = useState<string[]>([]); 
+    const [input, setInput] = useState<string>(); 
 
     useEffect(() => {
-        async function getCars() {
-            const carsRef = collection(db, "cars"); 
-            const querryRef= query(carsRef, orderBy("created", "desc")); 
-            getDocs(querryRef)
-            .then((snapshot) => {
-                console.log(snapshot.docs)
-                const list = [] as CarProps[]; 
-                snapshot.forEach((doc) => {
-                    list.push({
-                        id: doc.id,
-                        name: doc.data().name,
-                        year: doc.data().year,
-                        km: doc.data().km,
-                        price: doc.data().price,
-                        city: doc.data().city,
-                        uid: doc.data().uid,
-                        images: doc.data().images
-                    })
-                })
-                setCars(list); 
-                 
-            })
-            .catch((error) => {
-                console.log(error) 
-            }) 
-        }
+        
         getCars(); 
     }, []) 
-
+    async function getCars() {
+        const carsRef = collection(db, "cars"); 
+        const querryRef= query(carsRef, orderBy("created", "desc")); 
+        getDocs(querryRef)
+        .then((snapshot) => {
+            console.log(snapshot.docs)
+            const list = [] as CarProps[]; 
+            snapshot.forEach((doc) => {
+                list.push({
+                    id: doc.id,
+                    name: doc.data().name,
+                    year: doc.data().year,
+                    km: doc.data().km,
+                    price: doc.data().price,
+                    city: doc.data().city,
+                    uid: doc.data().uid,
+                    images: doc.data().images
+                })
+            })
+            setCars(list); 
+             
+        })
+        .catch((error) => {
+            console.log(error) 
+        }) 
+    }
     function handleImageLoad(id: string): void {
         setLoadImages((prevState) => [...prevState, id]); 
+    }
+
+   async  function handleSearchCar() {
+        if(input === '') {
+             getCars(); 
+             return;
+        }
+        setCars([]);
+        setLoadImages([]); 
+        const querryRef=query(collection(db, "cars"), 
+            where("name", ">=", input?.toLocaleUpperCase()),
+            where("name", "<=", input?.toLocaleUpperCase()+"\uf8ff") 
+        ); 
+        const querySnapShot = await getDocs(querryRef); 
+       
+        const listCars = [] as CarProps[]; 
+        querySnapShot.forEach((doc) => {
+            listCars.push({
+                id: doc.id,
+                name: doc.data().name,
+                year: doc.data().year,
+                km: doc.data().km,
+                price: doc.data().price,
+                city: doc.data().city,
+                uid: doc.data().uid,
+                images: doc.data().images
+            })
+        })
+        setCars(listCars); 
+
     }
 
     return ( 
@@ -63,8 +94,12 @@ export function Home() {
            <section className="bg-white p-4 rounded-lg w-full max-w-3xl mx-auto flex justify-center items-center gap-2">
              <input className="w-full border-2 rounded-lg h-9 px-3 outline-none" 
               placeholder="Digite o nome do carro..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)} 
             />
-            <button className="bg-red-500 text-white h-9 px-8 rounded-lg font-medium text-lg">
+            <button className="bg-red-500 text-white h-9 px-8 rounded-lg font-medium text-lg"
+             onClick={ () => handleSearchCar() }
+            >
                 Buscar
             </button>
            </section>
