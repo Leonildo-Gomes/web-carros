@@ -114,7 +114,7 @@ export function New() {
                 getDownloadURL(uploadTask.snapshot.ref).then((url) => {
                     console.log("Download URL:", url);
                     const imageItem = {
-                        uid: uidImage,
+                        uid: currentUid,
                         name: uidImage,
                         previewUrl: URL.createObjectURL(image),
                         url: url, 

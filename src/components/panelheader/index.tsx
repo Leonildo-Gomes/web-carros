@@ -12,7 +12,7 @@ export function DashboardHeader() {
                 <Link to='/dashboard'>
                     Dashboard
                 </Link>
-                <Link to='/dashboard/new' >
+                <Link to='/dashboard/new'>
                     Cadastrar Carro
                 </Link>
                 <button  onClick={handleLogout} className="ml-auto">
